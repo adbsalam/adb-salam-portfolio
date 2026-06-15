@@ -9,10 +9,10 @@ plugins {
 kotlin {
     listOf(
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "Theming"
+            baseName = "Prefs"
             isStatic = true
         }
     }
@@ -31,6 +31,9 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.androidDataStore)
+        }
+        webMain.dependencies {
+            implementation(libs.kotlinx.browser)
         }
     }
 }

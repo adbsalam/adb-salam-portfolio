@@ -1,49 +1,71 @@
 package uk.adbsalam.portfolio
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.adb.salam.clubmanager.shared.ui.theming.AppTheme
-import org.jetbrains.compose.resources.painterResource
-
-import portfolio.shared.generated.resources.Res
-import portfolio.shared.generated.resources.compose_multiplatform
+import com.adb.salam.clubmanager.shared.ui.theming.LocalAnimationPrefProvider
+import com.adb.salam.clubmanager.shared.ui.theming.LocalThemeProvider
+import com.adb.salam.clubmanager.shared.ui.theming.ThemeType
+import org.koin.compose.viewmodel.koinViewModel
+import uk.adbsalam.portfolio.shared.navigation.NavigationIntent
+import uk.adbsalam.portfolio.shared.navigation.rootNav.RootNav
+import uk.adbsalam.portfolio.theming.LocalNavigationSettings
+import uk.adbsalam.portfolio.theming.ThemeState
+import uk.adbsalam.portfolio.theming.ThemeViewModel
+import uk.adbsalam.portfolio.theming.appbackground.snow.snowfall
 
 @Composable
-@Preview
-fun App() {
-    AppTheme {
+fun App(themeViewModel: ThemeViewModel = koinViewModel()) {
+    val themeState by themeViewModel.themeState.collectAsState()
+    LaunchedEffect(null) {
+        themeViewModel.loadCurrentTheme()
+    }
 
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
+    when (themeState) {
+        ThemeState.Loading -> {
+            AppTheme(
+                themeType = ThemeType.SYSTEM,
+            ) {
+                Box(Modifier.fillMaxSize())
             }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+        }
+
+        is ThemeState.Loaded -> {
+            val state = (themeState as ThemeState.Loaded)
+            CompositionLocalProvider(
+                LocalThemeProvider provides state.themeType,
+                LocalAnimationPrefProvider provides state.animationPref,
+                LocalNavigationSettings provides state.navigationSettings,
+            ) {
+                val snowModifier = if (state.themeType == ThemeType.CHRISTMAS) Modifier.snowfall() else Modifier
+                AppTheme(themeType = state.themeType) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .then(snowModifier)
+                                .background(MaterialTheme.colorScheme.surface)
+                                .fillMaxSize(),
+                    ) {
+                        RootNav { intent ->
+                            when (intent) {
+                                is NavigationIntent.OnThemeChanged -> {
+                                    themeViewModel.saveAppTheme(intent.themeType)
+                                }
+
+                                is NavigationIntent.OnAnimationPrefChange -> {
+                                    themeViewModel.saveAnimationPref(intent.isSelected)
+                                }
+
+                                is NavigationIntent.OnNavigationPrefChange -> {
+                                    themeViewModel.saveNavigationSettings(intent.navigationSettings)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

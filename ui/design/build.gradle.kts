@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
@@ -12,7 +11,7 @@ plugins {
 kotlin {
     listOf(
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "Design"
@@ -47,11 +46,12 @@ kotlin {
                 implementation(libs.compose.components.resources)
                 implementation(libs.androidx.lifecycle.viewmodelCompose)
                 implementation(libs.androidx.lifecycle.runtimeCompose)
-                implementation(libs.navigation)
+                implementation(libs.navigation.ui)
                 implementation(libs.coil3)
                 implementation(libs.coil3.network)
                 implementation(libs.hazeEffect)
                 implementation(libs.hazeMaterials)
+                implementation(libs.material.icons)
             }
         }
 

@@ -25,23 +25,25 @@ internal val DarkColorScheme =
 
 internal val LightColorScheme =
     lightColorScheme(
-        primary = primary_light,
-        secondary = secondary_light,
-        tertiary = tertiary_light,
-        background = light_backgraound,
-        secondaryContainer = secondary_container_light,
-        surface = light_surface,
-        surfaceVariant = light_surface_variant,
+        primary = LightColorSchemeColors.primary_light,
+        secondary = LightColorSchemeColors.secondary_light,
+        tertiary = LightColorSchemeColors.tertiary_light,
+        background = LightColorSchemeColors.light_backgraound,
+        secondaryContainer = LightColorSchemeColors.secondary_container_light,
+        surface = LightColorSchemeColors.light_surface,
+        surfaceVariant = LightColorSchemeColors.light_surface_variant,
         inverseSurface = Color.White,
     )
 
 internal val Christmas =
     lightColorScheme(
+        surface = christmas_gradient_color,
         primary = Color.Black,
         secondary = Color.White,
         tertiary = Color.White,
-        background = Color(0xFFF08A8A),
+        background = christmas_background_color,
         secondaryContainer = Color.White,
+        onBackground = Color.White,
         inverseSurface = Color.Red,
     )
 
@@ -58,6 +60,19 @@ internal val DeepDark =
         inverseSurface = Color.Black,
     )
 
+internal val CharCoalDark =
+    darkColorScheme(
+        primary = DeepDarkColorScheme.primary_deep_dark,
+        secondary = DeepDarkColorScheme.secondary_deep_dark,
+        tertiary = tertiary_dark,
+        background = DeepDarkColorScheme.background_deep_dark,
+        onPrimary = DeepDarkColorScheme.onBackground_deep_dark,
+        surface = charcoal_dark_surface,
+        secondaryContainer = primary_dark,
+        surfaceVariant = dark_surface_variant,
+        inverseSurface = Color.Black,
+    )
+
 /**
  *
  */
@@ -67,15 +82,16 @@ fun AppTheme(
     themeType: ThemeType = ThemeType.SYSTEM,
     content: @Composable () -> Unit,
 ) {
-
-    val colorScheme =  when (themeType) {
-        ThemeType.CHRISTMAS -> Christmas
-        ThemeType.DEEP_DARK -> DeepDark
-        ThemeType.LIGHT -> LightColorScheme
-        ThemeType.DARK -> DarkColorScheme
-        ThemeType.SYSTEM ->
-            if (isSystemDark) DeepDark else LightColorScheme
-    }
+    val colorScheme =
+        when (themeType) {
+            ThemeType.CHRISTMAS -> Christmas
+            ThemeType.DEEP_DARK -> DeepDark
+            ThemeType.LIGHT -> LightColorScheme
+            ThemeType.Twilight -> DarkColorScheme
+            ThemeType.Charcoal -> CharCoalDark
+            ThemeType.SYSTEM ->
+                if (isSystemDark) CharCoalDark else LightColorScheme
+        }
 
     val appFont = AppFontFamily()
 

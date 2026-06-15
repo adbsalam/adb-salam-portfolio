@@ -20,7 +20,9 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.shared)
+            api(projects.shared)
+            implementation(projects.core.prefs)
+            implementation(libs.koin.core)
 
             implementation(libs.compose.ui)
         }

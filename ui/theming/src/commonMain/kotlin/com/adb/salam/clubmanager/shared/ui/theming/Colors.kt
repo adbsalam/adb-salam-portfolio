@@ -26,8 +26,11 @@ val dark_gradient_color_one = primary_dark
 val dark_gradient_color_two = dark_background
 
 val christmas_gradient_color = Color(0xFF990537)
+val christmas_background_color = Color(0xFFF08A8A)
 val light_gradient_color_one = Color(0xFFFFF6F9)
 val light_gradient_color_two = secondary_light
+
+val charcoal_dark_surface = Color(0xFF212121)
 
 object DeepDarkColorScheme {
     val primary_deep_dark = Color(0xFF2196F3)
@@ -39,4 +42,14 @@ object DeepDarkColorScheme {
     val tertiary_dark = Color(0xFF50577A)
     val dark_surface_variant = Color(0xFF44494D)
     val secondaryContainer = Color(0xFF276880)
+}
+
+object LightColorSchemeColors {
+    val primary_light = Color(0xFF27A7F8)
+    val secondary_light = Color(0xFFF5EBCE)
+    val tertiary_light = Color.Green
+    val secondary_container_light = Color(0xFFF7D9AD)
+    val light_backgraound = Color(0xFFFFFFFF)
+    val light_surface_variant = Color(0xFFD4E4FF)
+    val light_surface = Color(0xFFF2F2F7)
 }

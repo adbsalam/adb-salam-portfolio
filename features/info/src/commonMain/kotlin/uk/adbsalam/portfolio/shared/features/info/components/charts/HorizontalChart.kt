@@ -1,0 +1,54 @@
+package uk.adbsalam.portfolio.shared.features.info.components.charts
+
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+@Composable
+internal fun HorizontalChart(
+    subTitle: String,
+    percent: Float,
+) {
+    var percentFloat by remember { mutableStateOf(0f) }
+
+    LaunchedEffect(key1 = null) {
+        percentFloat = percent
+    }
+
+    val progressAnimation by animateFloatAsState(
+        targetValue = percentFloat,
+        animationSpec = tween(durationMillis = 1000, easing = LinearEasing),
+        label = "",
+    )
+
+    Row(modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.weight(1f)) {
+            Text(
+                text = subTitle,
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+        }
+
+        Column(Modifier.weight(2f)) {
+            LinearProgressIndicator(
+                modifier =
+                    Modifier
+                        .height(12.dp)
+                        .fillMaxWidth(),
+                progress = { progressAnimation },
+                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+            )
+        }
+    }
+}

@@ -1,8 +1,6 @@
 package convention
 
-import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import com.android.build.api.dsl.androidLibrary
-import com.android.build.api.variant.KotlinMultiplatformAndroidComponentsExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -12,7 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 class AndroidLibraryConventionPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         with(project) {
-            project.extensions.configure<KotlinMultiplatformExtension>() {
+            project.extensions.configure<KotlinMultiplatformExtension> {
                 androidLibrary {
                     namespace = deriveNamespaceFromPath(project)
                     compileSdk = 36
@@ -28,7 +26,6 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                     }
                 }
             }
-
         }
     }
 
@@ -38,9 +35,10 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
      */
     private fun deriveNamespaceFromPath(project: Project): String {
         val rootPackage = "uk.adbsalam.portfolio"
-        val projectPath = project.path
-            .removePrefix(":")
-            .replace(":", ".")
+        val projectPath =
+            project.path
+                .removePrefix(":")
+                .replace(":", ".")
 
         return if (projectPath.isNotEmpty()) {
             "$rootPackage.$projectPath"
@@ -49,4 +47,3 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         }
     }
 }
-
