@@ -1,8 +1,12 @@
-package com.adb.salam.clubmanager.shared.ui.design.navbar
+package uk.adbsalam.portfolio.shared.ui.design.navBar
 
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,8 +15,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
@@ -27,10 +33,12 @@ import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import portfolio.ui.design.generated.resources.Res
 import portfolio.ui.design.generated.resources.experiment
+import uk.adbsalam.portfolio.shared.core.config.NestedScrollDirection
 
 @OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
 fun FloatingAppBar(
+    scrollDirection: NestedScrollDirection,
     modifier: Modifier,
     navSelectionBackgroundOffset: Dp,
     hazeState: HazeState,
@@ -41,6 +49,14 @@ fun FloatingAppBar(
     var pollsOffset by remember { mutableStateOf(0f.dp) }
     var shoutsOffset by remember { mutableStateOf(0f.dp) }
     var accountsOffset by remember { mutableStateOf(0f.dp) }
+    val scale by animateFloatAsState(
+        targetValue = if (scrollDirection == NestedScrollDirection.NONE) 1f else 0.9f,
+        animationSpec = tween(300)
+    )
+    val offsetBy by animateDpAsState(
+        targetValue = if (scrollDirection == NestedScrollDirection.NONE) 0.dp else (-10).dp,
+        animationSpec = tween(300)
+    )
     val indicatorColor =
         if (LocalThemeProvider.current == ThemeType.CHRISTMAS) christmas_background_color else MaterialTheme.colorScheme.secondaryContainer
     val animateBackground =
@@ -49,13 +65,15 @@ fun FloatingAppBar(
             animationSpec =
                 spring(
                     dampingRatio = Spring.DampingRatioLowBouncy,
-                    stiffness = Spring.StiffnessLow,
+                    stiffness = Spring.StiffnessMediumLow,
                 ),
         )
 
     Box(
         modifier =
             modifier
+                .scale(scale)
+                .offset(y = offsetBy)
                 .fillMaxWidth()
                 .padding(horizontal = 36.dp, vertical = 16.dp)
                 .navigationBarsPadding()
@@ -94,7 +112,9 @@ fun FloatingAppBar(
                 AppNavBarItem(
                     modifier =
                         Modifier.onGloballyPositioned {
-                            homeOffset = with(density) { it.positionInRoot().x.toDp() }
+                            if (homeOffset == 0.dp) {
+                                homeOffset = with(density) { it.positionInRoot().x.toDp() }
+                            }
                         },
                     label = "Home",
                     icon = Icons.Rounded.Home,
@@ -106,7 +126,9 @@ fun FloatingAppBar(
                 AppNavBarItem(
                     modifier =
                         Modifier.onGloballyPositioned {
-                            shoutsOffset = with(density) { it.positionInRoot().x.toDp() }
+                            if (shoutsOffset == 0.dp) {
+                                shoutsOffset = with(density) { it.positionInRoot().x.toDp() }
+                            }
                         },
                     label = "Labs",
                     drawable = Res.drawable.experiment,
@@ -118,7 +140,9 @@ fun FloatingAppBar(
                 AppNavBarItem(
                     modifier =
                         Modifier.onGloballyPositioned {
-                            pollsOffset = with(density) { it.positionInRoot().x.toDp() }
+                            if (pollsOffset == 0.dp) {
+                                pollsOffset = with(density) { it.positionInRoot().x.toDp() }
+                            }
                         },
                     label = "Info",
                     icon = Icons.Rounded.Info,
@@ -130,7 +154,9 @@ fun FloatingAppBar(
                 AppNavBarItem(
                     modifier =
                         Modifier.onGloballyPositioned {
-                            accountsOffset = with(density) { it.positionInRoot().x.toDp() }
+                            if (accountsOffset == 0.dp) {
+                                accountsOffset = with(density) { it.positionInRoot().x.toDp() }
+                            }
                         },
                     label = "Videos",
                     icon = Icons.Rounded.PlayArrow,

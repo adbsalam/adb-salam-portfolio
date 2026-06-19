@@ -10,13 +10,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSerializable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,17 +21,18 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.metadata
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.compose.serialization.serializers.SnapshotStateListSerializer
-import com.adb.salam.clubmanager.shared.ui.design.navbar.FloatingAppBar
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import org.koin.compose.viewmodel.koinViewModel
 import uk.adbsalam.portfolio.shared.core.config.Machine
+import uk.adbsalam.portfolio.shared.core.config.NestedScrollDirection
 import uk.adbsalam.portfolio.shared.core.config.currentMachine
 import uk.adbsalam.portfolio.shared.features.home.HomeScreen
 import uk.adbsalam.portfolio.shared.features.info.InfoScreen
 import uk.adbsalam.portfolio.shared.navigation.navigate
 import uk.adbsalam.portfolio.shared.navigation.popToRoot
 import uk.adbsalam.portfolio.shared.ui.design.AppNavBar
+import uk.adbsalam.portfolio.shared.ui.design.navBar.FloatingAppBar
 
 @Composable
 internal fun MainNavGraph(
@@ -47,6 +44,7 @@ internal fun MainNavGraph(
     val hazeState = rememberHazeState()
     val machine = currentMachine()
     val navBarState by viewModel.navBarState.collectAsState()
+    var scrollDirection by rememberSaveable { mutableStateOf(NestedScrollDirection.NONE) }
     val backStack: MutableList<MainAppNav> =
         rememberSerializable(serializer = SnapshotStateListSerializer()) {
             mutableStateListOf(
@@ -64,7 +62,9 @@ internal fun MainNavGraph(
     }
 
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .nestedScrollDirection { scrollDirection = it },
         contentAlignment = Alignment.BottomCenter,
     ) {
         NavDisplay(
@@ -107,7 +107,8 @@ internal fun MainNavGraph(
 
         if (machine != Machine.IOS) {
             FloatingAppBar(
-                modifier = Modifier.align(Alignment.BottomCenter),
+                modifier = Modifier,
+                scrollDirection = scrollDirection,
                 navSelectionBackgroundOffset = navBarState.offset,
                 hazeState = hazeState,
                 onNavClicked = viewModel::onIndexNavChanged,

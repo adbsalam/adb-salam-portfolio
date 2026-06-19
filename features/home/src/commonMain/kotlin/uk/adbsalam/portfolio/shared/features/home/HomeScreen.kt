@@ -4,7 +4,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -22,6 +29,22 @@ fun HomeScreen(onNavigateToSettingsScreen: () -> Unit) {
     val scrollState = rememberScrollState()
     val headerHeight = LocalWindowInfo.current.containerDpSize.height.value / 1.75
     val hazeState = rememberHazeState()
+    val localHaptic = LocalHapticFeedback.current
+    var scrollHapticDone by remember { mutableStateOf(false) }
+
+    LaunchedEffect(scrollState.value) {
+        when {
+            scrollState.value > 10 && !scrollHapticDone -> {
+                localHaptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                scrollHapticDone = true
+            }
+
+            scrollState.value == 0 && scrollHapticDone -> {
+                localHaptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                scrollHapticDone = false
+            }
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(

@@ -39,6 +39,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(project(":ui:theming"))
+                implementation(projects.core.config)
                 implementation(libs.compose.runtime)
                 implementation(libs.compose.foundation)
                 implementation(libs.compose.material3)
