@@ -86,11 +86,7 @@ internal fun MainNavGraph(
             onBack = { viewModel.onBackPress() },
             entryProvider =
                 entryProvider {
-                    entry<MainAppNav.Home>(
-                        metadata =
-                            metadata {
-                            },
-                    ) {
+                    entry<MainAppNav.Home>() {
                         HomeScreen(onNavigateToSettingsScreen = onNavigateToThemeSelectionScreen)
                     }
                     entry<MainAppNav.Info> {
